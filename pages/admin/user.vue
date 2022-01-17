@@ -6,7 +6,7 @@
       :rules="rules"
       ref="form">
       <h2>
-        Войти в панель администратора
+        Создать пользователя
       </h2>
       <el-form-item label="Логин" prop="login">
         <el-input v-model.trim="controls.login"/>
@@ -24,7 +24,7 @@
           round
           :loading="loading"
         >
-          Войти
+          Создать
         </el-button>
       </el-form-item>
     </el-form>
@@ -54,9 +54,35 @@
         }
       }
     },
+    methods: {
+      onSubmit() {
+        this.$refs.form.validate(async valid => {
+          if (valid) {
+            this.loading = true
+
+            try {
+              const formData = {
+                login: this.controls.login,
+                password: this.controls.password
+              }
+
+              await this.$store.dispatch('auth/createUser', formData)
+              this.$message.success('новый пользователь добавлен')
+              this.controls.login = ''
+              this.controls.password = ''
+              this.loading = false
+            } catch (e) {
+              this.loading = false
+            }
+          }
+        })
+      }
+    }
   }
 </script>
 
 <style scoped>
-
+  form {
+    width: 600px;
+  }
 </style>
